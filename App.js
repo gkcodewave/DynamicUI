@@ -9,24 +9,27 @@
 import React from 'react';
 import type {Node} from 'react';
 import {
+  FlatList,
   ImageBackground,
   SafeAreaView,
-  ScrollView,
+  Dimensions,
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
 
 import { serverResponseForDynamicComponentUI } from './server_json/serverResponse';
+import {serverResponse1} from './server_json/serverResponse1'
 
-
-
+const numColumns = 2
+const WIDTH = Dimensions.get('window').width
 const App: () => Node = () => {
   
 const image = { uri: 'https://reactjs.org/logo-og.png' };
-  
+
 
 const CustomComp = (props) => {
   const {type} = props;
@@ -38,38 +41,59 @@ const CustomComp = (props) => {
     return <Text style={styles} >{text}</Text>
   }
 }
+  
+  _renderItem = ({ item, index }) => {
+    return (
+      <View style={styles.itemStyle}>
+        <ImageBackground
+          source={item.btnImage}
+          resizeMode="cover"
+          style={styles.image}
+        />
+        <Text style={styles.itemText}>{item.btnTitle}</Text>
+      </View>
+    );
+  }
 
   return (
     // Dynamic entire Component
-      <View style={styles.container}>
-        {CustomComp(serverResponseForDynamicComponentUI)}
-        <StatusBar style="auto" />
-      </View>
+      // <View style={styles.container}>
+      //   {CustomComp(serverResponseForDynamicComponentUI)}
+      //   <StatusBar style="auto" />
+      // </View>
     // -END- Dynamic entire Component
 
     //Dynamic UI
-      // <SafeAreaView style={{flex: 1}}>
-      // <View
-      //   style={[
-      //     styles.container,
-      //     {
-      //       // Try setting `flexDirection` to `"row"`.
-      //       flexDirection: 'column',
-      //     },
-      //   ]}>
-      //   <StatusBar barStyle="dark-content" />
-      //   <View style={{ flex: 1, backgroundColor: 'white' }}>
-      //     {/* <ImageBackground source={image} resizeMode='cover' style={styles.image}>
-      //       <Text style={styles.Text, {flexWrap:'wrap-reverse'} }> TEST </Text>
-      //     </ImageBackground> */}
-      //     <Text style={styles.Text, {justifyContent:'center'}}>abc</Text>
-      //   </View>
-      //   <View style={{flex: 2, backgroundColor: 'red'}}>
-        
-      //   </View>
-      //   {/* <View style={{flex: 3, backgroundColor: 'white'}} /> */}
-      // </View>
-      // </SafeAreaView>
+      <SafeAreaView style={{flex: 1}}>
+      <View
+        style={[
+          styles.container,
+          {
+            // Try setting `flexDirection` to `"row"`.
+            flexDirection: 'column',
+          },
+        ]}>
+        <StatusBar barStyle="dark-content" />
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
+          {/* <ImageBackground source={image} resizeMode='cover' style={styles.image}>
+            <Text style={styles.Text, {flexWrap:'wrap-reverse'} }> TEST </Text>
+          </ImageBackground> */}
+          <Text style={styles.sectionTitle}>{serverResponse1.header}</Text>
+        </View>
+        <View style={{flex: 2, backgroundColor: 'white',}}>
+          <FlatList
+            data={serverResponse1.actions}
+            
+            renderItem={this._renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={numColumns}
+          />
+            
+          
+        </View>
+        {/* <View style={{flex: 3, backgroundColor: 'white'}} /> */}
+      </View>
+      </SafeAreaView>
 
     // -END- Dynamic UI
     
@@ -84,6 +108,8 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
+    textAlign: 'center',
+    margin:50
   },
   sectionDescription: {
     marginTop: 8,
@@ -99,7 +125,18 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    justifyContent:'center'
+    justifyContent: 'center',
+  },
+  itemStyle: {
+    backgroundColor: '#3232ff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    margin: 1,
+    height: WIDTH / numColumns
+  },
+  itemText: {
+    color:'white'
   }
 });
 
